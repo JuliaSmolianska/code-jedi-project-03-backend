@@ -61,35 +61,19 @@ const updateUser = async(req, res) =>{
   
 
 
+
+
+
 const updateWaterNorm = async (req, res) => {
     const { _id } = req.user;
-    const { waterRate } = req.body;
-    await User.findByIdAndUpdate(_id, { waterRate });
+    const { waterRate, gender } = req.body;
+    await User.findByIdAndUpdate(_id, { waterRate, gender });
     res.status(200).json({ waterRate });
   }
-
-
-  const changePassword = async (req, res, next) => {
-    const { _id, verify, password  } = req.user;
-    const { newPassword } = req.body;
-    if (!verify) {
-      throw HttpError(401, "Email not verify")
-    }
-
-    const passwordCompare = await bcrypt.compare(newPassword, password);
-    if (passwordCompare) {
-      throw HttpError(401, "This password is your current password!");
-    }
-
-    await User.findByIdAndUpdate(_id, { password });
-    res.status(200).json({ message: "Password changed successful"});
-  }
-
 
   export default {
     updateAvatar: ctrlWrapper(updateAvatar),
     currentUser: ctrlWrapper(currentUser),
     updateUser: ctrlWrapper(updateUser),
-    updateWaterNorm: ctrlWrapper(updateWaterNorm),
-    changePassword: ctrlWrapper(changePassword)
+    updateWaterNorm: ctrlWrapper(updateWaterNorm)
   };
