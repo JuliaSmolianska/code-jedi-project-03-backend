@@ -1,11 +1,10 @@
-import { HttpError } from "../helpers/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
 import { consumedWater } from "../db/models/consumedWater.js";
 
 const getAllConsumedWaterToday = async (req, res) => {
   const { date, month } = req.params;
   const { _id: owner } = req.user;
-  const allWaterList = await consumedWater.find({ owner, date, month }, "waterVolume time")
+  const allWaterList = await consumedWater.find({ owner, date, month, percent }, "waterVolume time")
   res.json(allWaterList);
 }
 
@@ -51,7 +50,10 @@ const updateConsumedWaterId = async (req, res) => {
   const { _id: owner } = req.user;
   const updateConsumedWater = await consumedWater.findByIdAndUpdate({ _id: consumedWaterId, owner }, req.body);
   if (!updateConsumedWater) {
-    throw HttpError(404, `Water record with id=${consumedWaterId} not found`);
+       res.status(404).json({
+  message: `Water record with id=${consumedWaterId} not found`,
+});
+return;
   }
   res.json(updateConsumedWater);
 }
@@ -62,7 +64,10 @@ const deleteConsumedWaterId = async (req, res) => {
   const { _id: owner } = req.user;
   const removeConsumedWaterRecord = await consumedWater.findOneAndDelete({ _id: consumedWaterId, owner })
   if (!removeConsumedWaterRecord) {
-    throw HttpError(404, `Water record with id=${consumedWaterId} not found`);
+       res.status(404).json({
+  message: `Water record with id=${consumedWaterId} not found`,
+});
+return;
   }
   res.json({ message: "Deleted success" });
 }
